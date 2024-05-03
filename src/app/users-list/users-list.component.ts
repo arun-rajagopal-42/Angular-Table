@@ -17,14 +17,14 @@ import {User} from "./../services/users/models/user.model";
         CommonModule,
         HttpClientModule
     ],
-    providers: [UsersService,],
+    providers: [UsersService],
     templateUrl: './users-list.component.html',
     styleUrl: './users-list.component.scss'
 })
 
 
 export class UsersListComponent implements AfterViewInit, OnInit {
-    displayedColumns: string[] = ['firstname', 'lastname', 'email', 'phone', 'city'];
+    displayedColumns: string[] = ['name.first', 'name.last', 'email', 'phone', 'location.city'];
     dataSource = new MatTableDataSource<User>();
 
     @ViewChild('sort') sort!: MatSort;
