@@ -61,7 +61,6 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit {
         this.columnDefs.forEach(columnDef => this.table.addColumnDef(columnDef));
         this.rowDefs.forEach(rowDef => this.table.addRowDef(rowDef));
         this.headerRowDefs.forEach(headerRowDef => this.table.addHeaderRowDef(headerRowDef));
-        this.columns.push('edit');
         this.table.setNoDataRow(this.noDataRow);
         this.watchSearchChange();
         this.customFilterPredicate();
@@ -121,10 +120,6 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit {
             search += data[key];
         }
         return search;
-    }
-
-    edit(el: any){
-        console.log(el);
     }
 
 }
