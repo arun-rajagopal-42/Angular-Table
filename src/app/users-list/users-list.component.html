@@ -1,4 +1,5 @@
 <div class="table-container">
+    <h1>Users</h1>
     <form [formGroup]="editForm">
         <app-table [dataSource]="dataSource" [columns]="displayedColumns"
                    matSort #sort="matSort">
@@ -6,7 +7,7 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
                 <td mat-cell *matCellDef="let element">
                     @if (element == editRow) {
-                        <input [value]="element.email" formControlName="email">
+                        <input [value]="element.email" formControlName="email" name="Email">
                     } @else {
                         {{ element.email }}
                     }
@@ -61,11 +62,15 @@
                 <th mat-header-cell *matHeaderCellDef>Edit</th>
                 <td mat-cell *matCellDef="let element">
                     @if (element == editRow) {
-                        <button (click)="saveUser(element)">
+                        <button mat-mini-fab color="primary"
+                                (click)="saveUser(element)"
+                                aria-label="Save User">
                             <mat-icon>save</mat-icon>
                         </button>
                     } @else {
-                        <button (click)="editUserList(element)">
+                        <button mat-mini-fab color="primary"
+                                (click)="editUser(element)"
+                                aria-label="Edit User">
                             <mat-icon>edit</mat-icon>
                         </button>
                     }

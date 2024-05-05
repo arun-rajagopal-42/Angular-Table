@@ -1,14 +1,17 @@
 .table-container {
-  box-shadow: 0 2px 8px 3px #065c901c;
   min-width: 720px;
   max-width: 1200px;
   margin: 50px auto;
-  table{
+  form{
+    box-shadow: 0 2px 8px 3px #065c901c;
+  }
+  table {
     max-height: 750px;
     overflow-y: auto;
     box-shadow: none;
-    input{
-      width: 100%;
+
+    input, textarea {
+      width: calc(100% - 8px);
     }
   }
 }

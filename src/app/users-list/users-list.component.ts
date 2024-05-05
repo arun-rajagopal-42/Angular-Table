@@ -8,6 +8,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {User} from "./../services/users/models/user.model";
 import {MatIcon} from "@angular/material/icon";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {MatMiniFabButton} from "@angular/material/button";
 
 @Component({
     selector: 'app-users-list',
@@ -19,7 +20,8 @@ import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
         CommonModule,
         HttpClientModule,
         MatIcon,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatMiniFabButton
     ],
     providers: [UsersService],
     templateUrl: './users-list.component.html',
@@ -28,7 +30,7 @@ import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 
 
 export class UsersListComponent implements AfterViewInit, OnInit {
-    displayedColumns: string[] = ['name.first', 'name.last', 'email', 'phone', 'location.city'];
+    displayedColumns: string[] = ['name.first', 'name.last', 'email', 'phone', 'location.city', 'edit'];
     dataSource = new MatTableDataSource<User>();
     editRow!: User | undefined;
 
@@ -53,7 +55,7 @@ export class UsersListComponent implements AfterViewInit, OnInit {
         this.dataSource.sort = this.sort;
     }
 
-    editUserList(el: User) {
+    editUser(el: User) {
         this.editRow = el;
         this.editForm.setValue({
             "location.city": el.location.city,
@@ -72,17 +74,18 @@ export class UsersListComponent implements AfterViewInit, OnInit {
             phone: value.phone,
             location: {
                 ...el.location,
-                city : value["location.city"]
+                city: value["location.city"]
             },
             name: {
                 ...el.name,
                 first: value["name.first"],
                 last: value["name.last"]
             }
-        }
-        const foundIndex =  this.dataSource.data.findIndex(data=> data === el);
+        };
+        const foundIndex = this.dataSource.data.findIndex(data => data === el);
         this.dataSource.data[foundIndex] = this.editRow;
-        this.dataSource._updateChangeSubscription()
+        this.dataSource._updateChangeSubscription();
+        //ToDo: Backend request
         this.editRow = undefined;
     }
 
