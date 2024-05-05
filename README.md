@@ -13,7 +13,7 @@ To install Angular on your local system, you need the following:
 To verify the right Node.js version is in the environment
 `node -v # should print v20.12.2`
 
-# verifies the right NPM version is in the environment
+To verifies the right NPM version is in the environment
 `npm -v # should print 10.5.0`
 
 ### AngularCli
