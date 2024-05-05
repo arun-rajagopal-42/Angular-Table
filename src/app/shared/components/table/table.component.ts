@@ -1,9 +1,11 @@
 import {
-    AfterContentInit, AfterViewInit,
+    AfterContentInit,
+    AfterViewInit,
     Component,
     ContentChild,
     ContentChildren,
     Input,
+    OnDestroy,
     QueryList,
     ViewChild
 } from '@angular/core';
@@ -12,7 +14,8 @@ import {
     MatHeaderRowDef,
     MatNoDataRow,
     MatRowDef,
-    MatTable, MatTableDataSource,
+    MatTable,
+    MatTableDataSource,
     MatTableModule
 } from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
@@ -33,13 +36,14 @@ import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
         MatInputModule,
         MatIconModule,
         ReactiveFormsModule,
-        FormsModule, MatIconButton,
+        FormsModule,
+        MatIconButton,
         MatPaginatorModule
     ],
     templateUrl: './table.component.html',
     styleUrl: './table.component.scss'
 })
-export class TableComponent<T> implements AfterContentInit, AfterViewInit {
+export class TableComponent<T> implements AfterContentInit, AfterViewInit, OnDestroy {
 
     @ContentChildren(MatHeaderRowDef) headerRowDefs!: QueryList<MatHeaderRowDef>;
     @ContentChildren(MatRowDef) rowDefs!: QueryList<MatRowDef<T>>;
@@ -49,9 +53,9 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit {
     @ViewChild(MatTable, {static: true}) table!: MatTable<T>;
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-    @Input() columns!: string[];
+    @Input() columns: string[] = [];
 
-    @Input() dataSource!: MatTableDataSource<T>;
+    @Input() dataSource: MatTableDataSource<T> = new MatTableDataSource();
     subscription = new Subscription();
 
     searchText = new FormControl('');
@@ -93,12 +97,13 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit {
 
     private watchSearchChange(): void {
         this.subscription.add(
-            this.searchText
-                .valueChanges.pipe(debounceTime(1000), distinctUntilChanged())
+            this.searchText.valueChanges.pipe(
+                debounceTime(1000),
+                distinctUntilChanged())
                 .subscribe(
                     {
                         next: (value) => this.searchString(value),
-                        error: () => console.error,
+                        error: (err) => console.error(err),
                         complete: () => console.info('complete')
                     }
                 )
@@ -120,6 +125,10 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit {
             search += data[key];
         }
         return search;
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 
 }

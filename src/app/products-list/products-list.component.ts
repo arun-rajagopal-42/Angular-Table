@@ -2,11 +2,10 @@ import {AfterViewInit, Component, LOCALE_ID, OnDestroy, OnInit, ViewChild} from 
 import {TableComponent} from "../shared/components/table/table.component";
 import {MatSort, MatSortModule} from "@angular/material/sort";
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
-import {CommonModule, DecimalPipe} from "@angular/common";
+import {CommonModule, DecimalPipe, registerLocaleData} from "@angular/common";
 import {HttpClientModule} from "@angular/common/http";
 import {ProductsService} from "../shared/services/products/products.service";
 import {Product} from "../shared/services/products/models/products.model";
-import {registerLocaleData} from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import {StarRatingComponent} from "../shared/components/star-rating/star-rating.component";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
