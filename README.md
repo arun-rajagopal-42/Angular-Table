@@ -21,7 +21,7 @@ To install Angular on your local system, you need the following:
 
 ## Hosting
 
-Project Demo Link - [Angular-Table](https://6637e9348606eb2224b38c50--famous-zuccutto-36585a.netlify.app)
+Project Demo Link - [Angular-Table](https://famous-zuccutto-36585a.netlify.app/)
 
 ## Components
 
