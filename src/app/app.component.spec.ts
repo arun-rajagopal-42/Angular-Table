@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'Baader-Angular-Table' title`, () => {
+  it(`should have the 'Angular-Table' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('Baader-Angular-Table');
+    expect(app.title).toEqual('Angular-Table');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Baader-Angular-Table');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Angular-Table');
   });
 });

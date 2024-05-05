@@ -8,7 +8,7 @@
     }
   },
   "projects": {
-    "Baader-Angular-Table": {
+    "Angular-Table": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -18,7 +18,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/baader-angular-table",
+            "outputPath": "dist/angular-table",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -63,10 +63,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Baader-Angular-Table:build:production"
+              "buildTarget": "Angular-Table:build:production"
             },
             "development": {
-              "buildTarget": "Baader-Angular-Table:build:development"
+              "buildTarget": "Angular-Table:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -74,7 +74,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "Baader-Angular-Table:build"
+            "buildTarget": "Angular-Table:build"
           }
         },
         "test": {
