@@ -1,84 +1,84 @@
 <div class="table-container">
     <h1>Products</h1>
     <form [formGroup]="editForm">
-        <app-table [dataSource]="dataSource" [columns]="displayedColumns"
-                   matSort #sort="matSort">
+        <app-table [dataSource]="dataSource" [columns]="displayedColumns" matSort #sort="matSort">
             <ng-container matColumnDef="category">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
+                    <ng-container *ngIf="element === editRow; else displayCategory">
                         <input [value]="element.category" formControlName="category" name="Category">
-                    } @else {
+                    </ng-container>
+                    <ng-template #displayCategory>
                         {{ element.category }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="title">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Product</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
+                    <ng-container *ngIf="element === editRow; else displayTitle">
                         <input [value]="element.title" formControlName="title" name="Title">
-                    } @else {
+                    </ng-container>
+                    <ng-template #displayTitle>
                         {{ element.title }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="description">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
-                        <textarea [value]="element.description" formControlName="description"
-                                  name="Description"></textarea>
-                    } @else {
+                    <ng-container *ngIf="element === editRow; else displayDescription">
+                        <input [value]="element.description" formControlName="description" name="Description">
+                    </ng-container>
+                    <ng-template #displayDescription>
                         {{ element.description }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="rating.rate">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header [style.width.px]="130">Rating</th>
                 <td mat-cell *matCellDef="let element" [style.width.px]="130">
-                    @if (element == editRow) {
-                        <input [value]="element.rating.rate" formControlName="rating.rate" name="Rating">
-                        <input [value]="element.rating.count" formControlName="rating.count" name="Rating">
-                    } @else {
+                    <ng-container *ngIf="element === editRow; else displayRating" formGroupName="rating">
+                        <input [value]="element.rating.rate" formControlName="rate" name="Rating">
+                        <input [value]="element.rating.count" formControlName="count" name="Count">
+                    </ng-container>
+                    <ng-template #displayRating>
                         {{ element.rating.rate | number: '1.1-1' : 'de-DE' }}
                         <app-star-rating [rating]="element.rating.rate"></app-star-rating>
                         <br/>
                         {{ element.rating.count }} Ratings
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="price">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header colspan="1">Price</th>
-                <td mat-cell *matCellDef="let element" colspan="1" [style.text-align]="'right'">
-                    @if (element == editRow) {
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
+                <td mat-cell *matCellDef="let element" [style.text-align]="'right'">
+                    <ng-container *ngIf="element === editRow; else displayPrice">
                         <input [value]="element.price" formControlName="price" name="Price">
-                    } @else {
+                    </ng-container>
+                    <ng-template #displayPrice>
                         {{ element.price | currency : 'EUR' }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="edit">
                 <th mat-header-cell *matHeaderCellDef>Edit</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
-                        <button mat-mini-fab color="primary"
-                                (click)="saveProduct(element)"
-                                aria-label="Save Product">
+                    <ng-container *ngIf="element === editRow; else displayEdit">
+                        <button mat-mini-fab color="primary" (click)="saveProduct(element)" aria-label="Save Product">
                             <mat-icon>save</mat-icon>
                         </button>
-                    } @else {
-                        <button mat-mini-fab color="primary"
-                                (click)="editProduct(element)"
-                                aria-label="Edit Product">
+                    </ng-container>
+                    <ng-template #displayEdit>
+                        <button mat-mini-fab color="primary" (click)="editProduct(element)" aria-label="Edit Product">
                             <mat-icon>edit</mat-icon>
                         </button>
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
@@ -86,7 +86,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell" colspan="4">No data</td>
+                <td class="mat-cell" [colSpan]="displayedColumns.length">No data</td>
             </tr>
         </app-table>
     </form>

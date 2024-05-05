@@ -1,14 +1,15 @@
-import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
-import {TableComponent} from "./../table/table.component";
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {TableComponent} from "../shared/components/table/table.component";
 import {MatSort, MatSortModule} from "@angular/material/sort";
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
 import {CommonModule} from "@angular/common";
-import {UsersService} from "./../services/users/users.service";
+import {UsersService} from "../shared/services/users/users.service";
 import {HttpClientModule} from "@angular/common/http";
-import {User} from "./../services/users/models/user.model";
+import {User, UsersApiResponse} from "../shared/services/users/models/user.model";
 import {MatIcon} from "@angular/material/icon";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {MatMiniFabButton} from "@angular/material/button";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-users-list',
@@ -29,64 +30,61 @@ import {MatMiniFabButton} from "@angular/material/button";
 })
 
 
-export class UsersListComponent implements AfterViewInit, OnInit {
-    displayedColumns: string[] = ['name.first', 'name.last', 'email', 'phone', 'location.city', 'edit'];
+export class UsersListComponent implements AfterViewInit, OnInit, OnDestroy {
+    displayedColumns: string[] = ['name.first', 'name.last', 'email', 'phone', 'location.postcode', 'location.city', 'edit'];
     dataSource = new MatTableDataSource<User>();
-    editRow!: User | undefined;
+    editRow: User | null = null;
+    subscription = new Subscription();
 
     @ViewChild('sort') sort!: MatSort;
 
-    private usersService = inject(UsersService);
     editForm = new FormGroup({
-        'name.first': new FormControl(),
-        'name.last': new FormControl(),
-        'email': new FormControl(),
-        'phone': new FormControl(),
-        'location.city': new FormControl()
-    })
+        email: new FormControl(),
+        phone: new FormControl(),
+        name: new FormGroup({
+            first: new FormControl(),
+            last: new FormControl()
+        }),
+        location: new FormGroup({
+            city: new FormControl(),
+            postcode: new FormControl
+        })
+    });
+
+    constructor(private usersService: UsersService) {
+    }
 
     ngOnInit() {
-        this.usersService.getAllUsers().subscribe((value) => {
-            this.dataSource.data = value.results;
+        this.subscription = this.usersService.getAllUsers().subscribe({
+            next: (value) => this.setDataSource(value),
+            error: (err) => console.error(err)
         });
+    }
+
+    private setDataSource(value: UsersApiResponse) {
+        return this.dataSource.data = value.results;
     }
 
     ngAfterViewInit() {
         this.dataSource.sort = this.sort;
     }
 
-    editUser(el: User) {
-        this.editRow = el;
-        this.editForm.setValue({
-            "location.city": el.location.city,
-            "name.first": el.name.first,
-            "name.last": el.name.last,
-            email: el.email,
-            phone: el.phone
-        });
+    editUser(user: User) {
+        this.editRow = user;
+        this.editForm.patchValue(user);
     }
 
     saveUser(el: User) {
-        const value = this.editForm.value;
-        this.editRow = {
-            ...el,
-            email: value.email,
-            phone: value.phone,
-            location: {
-                ...el.location,
-                city: value["location.city"]
-            },
-            name: {
-                ...el.name,
-                first: value["name.first"],
-                last: value["name.last"]
-            }
-        };
         const foundIndex = this.dataSource.data.findIndex(data => data === el);
-        this.dataSource.data[foundIndex] = this.editRow;
+        const editedUser = {...this.editRow, ...this.editForm.value} as User;
+        this.dataSource.data.splice(foundIndex, 1, editedUser);
         this.dataSource._updateChangeSubscription();
         //ToDo: Backend request
-        this.editRow = undefined;
+        this.editRow = null;
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 
 }

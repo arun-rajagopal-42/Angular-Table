@@ -1,79 +1,92 @@
 <div class="table-container">
     <h1>Users</h1>
     <form [formGroup]="editForm">
-        <app-table [dataSource]="dataSource" [columns]="displayedColumns"
-                   matSort #sort="matSort">
+        <app-table [dataSource]="dataSource" [columns]="displayedColumns" matSort #sort="matSort">
             <ng-container matColumnDef="email">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
+                    <ng-container *ngIf="element === editRow; else displayEmail">
                         <input [value]="element.email" formControlName="email" name="Email">
-                    } @else {
+                    </ng-container>
+                    <ng-template #displayEmail>
                         {{ element.email }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="name.first">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Firstname</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
-                        <input [value]="element.name.first" formControlName="name.first">
-                    } @else {
+                    <ng-container *ngIf="element === editRow; else displayFirstName" formGroupName="name">
+                        <input [value]="element.name.first" formControlName="first">
+                    </ng-container>
+                    <ng-template #displayFirstName>
                         {{ element.name.first }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="name.last">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Lastname</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
-                        <input [value]="element.name.last" formControlName="name.last">
-                    } @else {
+                    <ng-container *ngIf="element === editRow; else displayLastName" formGroupName="name">
+                        <input [value]="element.name.last" formControlName="last">
+                    </ng-container>
+                    <ng-template #displayLastName>
                         {{ element.name.last }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="phone">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Phone</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
+                    <ng-container *ngIf="element === editRow; else displayPhone">
                         <input [value]="element.phone" formControlName="phone">
-                    } @else {
+                    </ng-container>
+                    <ng-template #displayPhone>
                         {{ element.phone }}
-                    }
+                    </ng-template>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="location.postcode">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Postcode</th>
+                <td mat-cell *matCellDef="let element">
+                    <ng-container *ngIf="element === editRow; else displayPostcode" formGroupName="location">
+                        <input [value]="element.location.postcode" formControlName="postcode">
+                    </ng-container>
+                    <ng-template #displayPostcode>
+                        {{ element.location.postcode }}
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="location.city">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> City</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>City</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
-                        <input [value]="element.location.city" formControlName="location.city">
-                    } @else {
+                    <ng-container *ngIf="element === editRow; else displayCity" formGroupName="location">
+                        <input [value]="element.location.city" formControlName="city">
+                    </ng-container>
+                    <ng-template #displayCity>
                         {{ element.location.city }}
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="edit">
                 <th mat-header-cell *matHeaderCellDef>Edit</th>
                 <td mat-cell *matCellDef="let element">
-                    @if (element == editRow) {
-                        <button mat-mini-fab color="primary"
-                                (click)="saveUser(element)"
-                                aria-label="Save User">
+                    <ng-container *ngIf="element === editRow; else displayEditButton">
+                        <button mat-mini-fab color="primary" (click)="saveUser(element)" aria-label="Save User">
                             <mat-icon>save</mat-icon>
                         </button>
-                    } @else {
-                        <button mat-mini-fab color="primary"
-                                (click)="editUser(element)"
-                                aria-label="Edit User">
+                    </ng-container>
+                    <ng-template #displayEditButton>
+                        <button mat-mini-fab color="primary" (click)="editUser(element)" aria-label="Edit User">
                             <mat-icon>edit</mat-icon>
                         </button>
-                    }
+                    </ng-template>
                 </td>
             </ng-container>
 
