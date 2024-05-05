@@ -36,14 +36,12 @@ registerLocaleData(localeDe);
     styleUrl: './products-list.component.scss'
 })
 export class ProductsListComponent implements AfterViewInit, OnInit, OnDestroy {
-    displayedColumns: string[] = ['category', 'title', 'description', 'rating.rate', 'price', 'edit'];
-    dataSource = new MatTableDataSource<Product>();
-    editRow: Product | null = null;
-    subscription = new Subscription();
+    products: Product[] = []; // Array to store fetched products
+    isLoading = false;  // Flag to indicate loading state
+    editRow: Product | null = null; // Product being edited
+    subscription = new Subscription(); // Subscription to handle API requests
 
-    @ViewChild('sort') sort!: MatSort;
-
-    editForm = new FormGroup({
+    productForm = new FormGroup({ // Form for editing product data
         category: new FormControl(),
         title: new FormControl(),
         description: new FormControl(),
@@ -54,39 +52,99 @@ export class ProductsListComponent implements AfterViewInit, OnInit, OnDestroy {
         price: new FormControl(),
     });
 
+    displayedColumns: string[] = ['category', 'title', 'description', 'rating.rate', 'price', 'edit']; // Columns to display in the table
+    dataSource = new MatTableDataSource<Product>(); // Data source for the table
+
+    @ViewChild('sort') sort!: MatSort;  // Reference to the MatSort directive
+
     constructor(private productsService: ProductsService) {
     }
 
-
+    /**
+     * Lifecycle hook called after component initialization.
+     * Fetches the list of products from the API.
+     */
     ngOnInit() {
+        // Fetch Products from the API when the component initializes
+        this.fetchProducts();
+    }
+
+    /**
+     * Fetches the list of products from the API.
+     * Updates component state with fetched data or handles errors.
+     */
+    private fetchProducts() {
+        this.isLoading = true;
         this.subscription = this.productsService.getAllProducts().subscribe({
-            next: (value) => this.setDataSourceValue(value),
-            error: (err) => console.error(err) // Further Error handling
+            next: (value) => {
+                // Update the component state with the fetched Products data
+                this.products = value;
+                // Set the data source for the table
+                this.setDataSourceValue();
+                this.isLoading = false;
+            },
+            error: (err) => {
+                // Handle errors by logging them to the console
+                console.error(err);
+                this.isLoading = false;
+            }
         });
     }
 
+    /**
+     * Sets the data source for the table.
+     */
+    setDataSourceValue() {
+        this.dataSource.data = this.products;
+    }
+
+    /**
+     * Lifecycle hook called after the view is initialized.
+     * Sets the sorting behavior for the table.
+     */
     ngAfterViewInit() {
         this.dataSource.sort = this.sort;
     }
 
-    setDataSourceValue(products: Product[]) {
-        this.dataSource.data = products;
-    }
-
+    /**
+     * Initializes the editing process for a product.
+     * @param product The user object being edited.
+     */
     editProduct(product: Product) {
         this.editRow = product;
-        this.editForm.patchValue(product);
+        this.productForm.patchValue(product);
     }
 
+    /**
+     * Saves the changes made to a product and updates the data source.
+     * @param product The product object representing the original product data.
+     */
     saveProduct(product: Product) {
-        const foundIndex = this.dataSource.data.findIndex(data => data === product);
-        const editedProduct = {...this.editRow, ...this.editForm.value} as Product;
-        this.dataSource.data.splice(foundIndex, 1, editedProduct);
+        // Find the index of the original product in the data source
+        const foundIndex = this.products.findIndex(data => data === product);
+
+        // Create a new product object with the edited data from the form
+        const editedProduct = {...this.editRow, ...this.productForm.value} as Product;
+
+        // Replace the original product with the edited product in the data source
+        this.products.splice(foundIndex, 1, editedProduct);
+
+        // Update the data source
+        this.setDataSourceValue();
+
+        // Notify the data source that the data has changed
         this.dataSource._updateChangeSubscription();
-        //ToDo: Backend request
+
+        // TODO: Send a request to the backend to save the changes
+
+        // Reset the editRow variable to indicate that editing is complete
         this.editRow = null;
     }
 
+    /**
+     * Lifecycle hook called when the component is destroyed.
+     * Unsubscribes from the subscription to prevent memory leaks.
+     */
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }

@@ -45,36 +45,55 @@ import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
 })
 export class TableComponent<T> implements AfterContentInit, AfterViewInit, OnDestroy {
 
+    // Query lists for the table directives
     @ContentChildren(MatHeaderRowDef) headerRowDefs!: QueryList<MatHeaderRowDef>;
     @ContentChildren(MatRowDef) rowDefs!: QueryList<MatRowDef<T>>;
     @ContentChildren(MatColumnDef) columnDefs!: QueryList<MatColumnDef>;
     @ContentChild(MatNoDataRow) noDataRow!: MatNoDataRow;
 
+    // ViewChild for the table and paginator
     @ViewChild(MatTable, {static: true}) table!: MatTable<T>;
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+    // Input properties
     @Input() columns: string[] = [];
-
     @Input() dataSource: MatTableDataSource<T> = new MatTableDataSource();
-    subscription = new Subscription();
 
-    searchText = new FormControl('');
+    subscription = new Subscription(); // Subscription for the search text change
+
+    searchText = new FormControl('');  // FormControl for search text input
 
 
+    /**
+     * Lifecycle hook called after the content is initialized.
+     * Sets the sorting behavior for the table.
+     */
     ngAfterContentInit() {
+        // Add column, row, and header row definitions to the table
         this.columnDefs.forEach(columnDef => this.table.addColumnDef(columnDef));
         this.rowDefs.forEach(rowDef => this.table.addRowDef(rowDef));
         this.headerRowDefs.forEach(headerRowDef => this.table.addHeaderRowDef(headerRowDef));
+
+        // Set the NoDataRow template for the table
         this.table.setNoDataRow(this.noDataRow);
+
+        // Set up filter and sort functionality
         this.watchSearchChange();
-        this.customFilterPredicate();
+        this.customFilter();
         this.customSorting();
     }
 
+    /**
+     * Lifecycle hook called after the view is initialized.
+     * Assigns the paginator to the data source
+     */
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
 
+    /**
+     * Custom sorting based on nested object properties
+     */
     private customSorting() {
         this.dataSource.sortingDataAccessor = function pathDataAccessor(item: any, path: string): any {
             return path.split('.')
@@ -84,7 +103,10 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit, OnDes
         }
     }
 
-    private customFilterPredicate() {
+    /**
+     * Custom filter for nested object properties
+     */
+    private customFilter() {
         this.dataSource.filterPredicate = (data: any, filter: string) => {
             const accumulator = (currentTerm: any, key: string) => {
                 return this.nestedFilterCheck(currentTerm, data, key);
@@ -95,6 +117,9 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit, OnDes
         }
     }
 
+    /**
+     *  Watch for changes in the search text input
+     */
     private watchSearchChange(): void {
         this.subscription.add(
             this.searchText.valueChanges.pipe(
@@ -110,10 +135,17 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit, OnDes
         );
     }
 
+    /**
+     * Perform search operation based on the entered text
+     * @param text The stringQuery for filtering
+     */
     searchString(text: string | null) {
         this.dataSource.filter = text ?? '';
     }
 
+    /**
+     * Recursive function to check nested object properties for filtering
+     */
     nestedFilterCheck(search: any, data: { [x: string]: any; }, key: string) {
         if (typeof data[key] === 'object') {
             for (const k in data[key]) {
@@ -127,6 +159,10 @@ export class TableComponent<T> implements AfterContentInit, AfterViewInit, OnDes
         return search;
     }
 
+    /**
+     * Lifecycle hook called when the component is destroyed.
+     * Unsubscribes from the subscription to prevent memory leaks.
+     */
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }

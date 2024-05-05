@@ -1,6 +1,6 @@
 <div class="table-container">
     <h1>Products</h1>
-    <form [formGroup]="editForm">
+    <form [formGroup]="productForm">
         <app-table [dataSource]="dataSource" [columns]="displayedColumns" matSort #sort="matSort">
             <ng-container matColumnDef="category">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>

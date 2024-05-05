@@ -1,9 +1,8 @@
-# AngularTable
+# AngularTable Demo
 
-Welcome to Tables Angular App. This project was generated with [Angular CLI](https://github.com/angular/angular-cli)
-version 17.3.6.
+This project demonstrates the implementation of an Angular table component with various features like sorting, filtering, and pagination.
 
-## Development server
+## Installation
 
 ### Prerequisites
 
@@ -11,31 +10,34 @@ To install Angular on your local system, you need the following:
 
 - [Node.js](https://nodejs.org/en/download)
 - npm package manager
+- Angular CLI
+  `npm install -g @angular/cli`
 
-To verify the right Node.js version is in the environment
-`node -v # should print v20.12.2`
+### Installation
+1. Clone the repository: `git clone https://github.com/example/angular-table-demo.git`
+2. Install dependencies: `npm install`
+3. Start the development server: `ng serve`
 
-To verifies the right NPM version is in the environment
-`npm -v # should print 10.5.0`
-
-### AngularCli
-
-To install the Angular CLI, open a terminal window and run the following command:
-`npm install -g @angular/cli`
-
-To install all the Project dependencies navigate to project root containing package.json file and run the following
-command:
-`npm install`
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you
-change any of the source files.
 
 ## Hosting
 
-The App is hosted in Netlify Pages. Click here to view the
-demo. [Angular-Table](https://6637e9348606eb2224b38c50--famous-zuccutto-36585a.netlify.app)
+Project Demo Link - [Angular-Table](https://6637e9348606eb2224b38c50--famous-zuccutto-36585a.netlify.app)
 
-## Further help
+## Components
 
-To get more help on the Angular CLI use `ng help` or go check out
-the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Users List Component
+
+- Displays a list of users fetched from the API.
+- Supports editing, sorting, filtering, and pagination.
+
+### Products List Component
+
+- Displays a list of products fetched from the API.
+- Supports editing, sorting, filtering, and pagination.
+
+## API
+
+- Users API: https://randomuser.me/api
+- Products API: https://fakestoreapi.com/products
+
+For more details, refer to the source code and inline documentation.

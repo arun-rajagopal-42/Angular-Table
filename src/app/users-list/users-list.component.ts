@@ -5,7 +5,7 @@ import {MatTableDataSource, MatTableModule} from "@angular/material/table";
 import {CommonModule} from "@angular/common";
 import {UsersService} from "../shared/services/users/users.service";
 import {HttpClientModule} from "@angular/common/http";
-import {User, UsersApiResponse} from "../shared/services/users/models/user.model";
+import {User} from "../shared/services/users/models/user.model";
 import {MatIcon} from "@angular/material/icon";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {MatMiniFabButton} from "@angular/material/button";
@@ -31,14 +31,12 @@ import {Subscription} from "rxjs";
 
 
 export class UsersListComponent implements AfterViewInit, OnInit, OnDestroy {
-    displayedColumns: string[] = ['name.first', 'name.last', 'email', 'phone', 'location.postcode', 'location.city', 'edit'];
-    dataSource = new MatTableDataSource<User>();
-    editRow: User | null = null;
-    subscription = new Subscription();
+    users: User[] = []; // Array to store fetched users
+    isLoading = false; // Flag to indicate loading state
+    editRow: User | null = null; // User being edited
+    subscription = new Subscription(); // Subscription to handle API requests
 
-    @ViewChild('sort') sort!: MatSort;
-
-    editForm = new FormGroup({
+    userForm = new FormGroup({ // Form for editing user data
         email: new FormControl(),
         phone: new FormControl(),
         name: new FormGroup({
@@ -51,38 +49,99 @@ export class UsersListComponent implements AfterViewInit, OnInit, OnDestroy {
         })
     });
 
+    displayedColumns: string[] = ['name.first', 'name.last', 'email', 'phone', 'location.postcode', 'location.city', 'edit']; // Columns to display in the table
+    dataSource = new MatTableDataSource<User>(); // Data source for the table
+
+    @ViewChild('sort') sort!: MatSort;  // Reference to the MatSort directive
+
     constructor(private usersService: UsersService) {
     }
 
+
+    /**
+     * Lifecycle hook called after component initialization.
+     * Fetches the list of users from the API.
+     */
     ngOnInit() {
+        this.fetchUsers();
+    }
+
+    /**
+     * Fetches the list of users from the API.
+     * Updates component state with fetched data or handles errors.
+     */
+    private fetchUsers() {
+        this.isLoading = true;
         this.subscription = this.usersService.getAllUsers().subscribe({
-            next: (value) => this.setDataSource(value),
-            error: (err) => console.error(err)
+            next: (value) => {
+                // Update the component state with the fetched users data
+                this.users = value.results;
+                // Set the data source for the table
+                this.setDataSource();
+                this.isLoading = false;
+            },
+            error: (err) => {
+                // Handle errors by logging them to the console
+                this.isLoading = false;
+                console.error(err)
+            }
         });
     }
 
-    private setDataSource(value: UsersApiResponse) {
-        return this.dataSource.data = value.results;
+    /**
+     * Sets the data source for the table.
+     */
+    private setDataSource() {
+        return this.dataSource.data = this.users; // Assign the users array to the data source
     }
 
+    /**
+     * Lifecycle hook called after the view is initialized.
+     * Sets the sorting behavior for the table.
+     */
     ngAfterViewInit() {
         this.dataSource.sort = this.sort;
     }
 
+    /**
+     * Initializes the editing process for a user.
+     * @param user The user object being edited.
+     */
     editUser(user: User) {
         this.editRow = user;
-        this.editForm.patchValue(user);
+        this.userForm.patchValue(user);
     }
 
-    saveUser(el: User) {
-        const foundIndex = this.dataSource.data.findIndex(data => data === el);
-        const editedUser = {...this.editRow, ...this.editForm.value} as User;
-        this.dataSource.data.splice(foundIndex, 1, editedUser);
+    /**
+     * Saves the changes made to a user and updates the data source.
+     * @param user The user object representing the original user data.
+     */
+    saveUser(user: User) {
+        // Find the index of the original user in the data source
+        const foundIndex = this.users.findIndex(data => data === user);
+
+        // Create a new user object with the edited data from the form
+        const editedUser = {...this.editRow, ...this.userForm.value} as User;
+
+        // Replace the original user with the edited user in the data source
+        this.users.splice(foundIndex, 1, editedUser);
+
+        // Update the data source
+        this.setDataSource();
+
+        // Notify the data source that the data has changed
         this.dataSource._updateChangeSubscription();
-        //ToDo: Backend request
+
+        // TODO: Send a request to the backend to save the changes
+
+        // Reset the editRow variable to indicate that editing is complete
         this.editRow = null;
     }
 
+    /**
+     * Lifecycle hook called when the component is destroyed.
+     * Unsubscribes from the subscription to prevent memory leaks.
+     */
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }

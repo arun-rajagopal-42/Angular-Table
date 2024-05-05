@@ -1,6 +1,6 @@
 <div class="table-container">
     <h1>Users</h1>
-    <form [formGroup]="editForm">
+    <form [formGroup]="userForm">
         <app-table [dataSource]="dataSource" [columns]="displayedColumns" matSort #sort="matSort">
             <ng-container matColumnDef="email">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
