@@ -1,5 +1,3 @@
-<mat-icon inline="true">{{ rating >= 1 ? 'star' : 'star_outlined' }}</mat-icon>
-<mat-icon inline="true">{{ rating >= 2 ? 'star' : 'star_outlined' }}</mat-icon>
-<mat-icon inline="true">{{ rating >= 3 ? 'star' : 'star_outlined' }}</mat-icon>
-<mat-icon inline="true">{{ rating >= 4 ? 'star' : 'star_outlined' }}</mat-icon>
-<mat-icon inline="true">{{ rating >= 5 ? 'star' : 'star_outlined' }}</mat-icon>
+<ng-container *ngFor="let starIndex of [1, 2, 3, 4, 5]">
+    <mat-icon inline="true">{{ rating >= starIndex ? 'star' : 'star_outlined' }}</mat-icon>
+</ng-container>

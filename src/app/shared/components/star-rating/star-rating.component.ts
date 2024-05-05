@@ -1,11 +1,13 @@
 import {Component, Input} from '@angular/core';
 import {MatIcon} from "@angular/material/icon";
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-star-rating',
   standalone: true,
   imports: [
-    MatIcon
+    MatIcon,
+    CommonModule
   ],
   templateUrl: './star-rating.component.html',
   styleUrl: './star-rating.component.scss'
